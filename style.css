@@ -1,0 +1,122 @@
+.map {
+    height: 97vh;
+    width: 97vw;
+    border: 1px solid rgb(68, 46, 46);
+    position: relative;
+}
+
+.search {
+    z-index: 2;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: white;
+    padding: 10px;
+    width: 350px;
+    height: 50;
+    border-radius: 7px;
+    display: flex;
+    border: 1px solid rgb(181, 177, 177);
+}
+
+.detail_search {
+    position: fixed;
+    top: 65px;
+    left: 20px;
+    width: 340px;
+    border-radius: 2px;
+    padding: 12px;
+    background-color: white;
+    border: 1px solid rgb(128, 123, 123);
+    transform: translateX(-110%);
+    opacity: 0;
+    transition: transform linear .2s;
+}
+
+.detait_header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgb(191, 184, 184);
+}
+
+.detail_icon-close {
+    cursor: pointer;
+}
+
+.checksearch:checked~.detail_search {
+    transform: translateX(0%);
+    opacity: 1;
+}
+
+.input_search {
+    flex: 1;
+    padding: 0 10px 0 10px;
+    border: none;
+    outline: none;
+    font-size: 1.2rem;
+    margin-left: 10px;
+    border-left: 1px solid rgb(181, 177, 177);
+}
+
+.list {
+    position: relative;
+}
+
+.list i {
+    font-size: 1.2rem;
+}
+
+.btn_search {
+    background-color: white;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.btn_search i:hover {
+    color: rgb(92, 92, 98);
+}
+
+.list:hover .option {
+    display: flex;
+}
+
+.option {
+    position: absolute;
+    top: 35px;
+    left: -10px;
+    background-color: white;
+    width: 350px;
+    z-index: 5;
+    border-radius: 3px;
+    position: absolute;
+    display: none;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid rgb(174, 171, 171);
+}
+
+.option::after {
+    content: "";
+    position: absolute;
+    width: 200px;
+    top: -15px;
+    left: 0px;
+    height: 20px;
+}
+
+.option_group_checbox {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.option_group_checbox label,
+.option_group_checbox input {
+    cursor: pointer;
+}
+
+.button_load_map {
+    background-color: white;
+    cursor: pointer;
+}
