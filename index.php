@@ -74,24 +74,36 @@
                                     <div class="option_group_checbox">
                                         <input onclick="oncheckprovince()" type="checkbox" id="province" name="province"
                                             value="province">
-                                        <label for="province">Province</label>
+                                        <label for="province"> Province</label>
                                     </div>
                                     <div class="option_group_checbox">
                                         <input onclick="oncheckdistrict()" type="checkbox" id="district" name="district"
                                             value="district">
-                                        <label for="district">District</label>
+                                        <label for="district"> District</label>
                                     </div>
                                     <div class="option_group_checbox">
                                         <input onclick="oncheckrail();" type="checkbox" id="rail" name="rail"
-                                            value="rail">Rail <br />
+                                            value="rail"> Rail <br />
                                     </div>
                                     <div class="option_group_checbox">
                                         <input onclick="oncheckwaterway();" type="checkbox" id="waterway"
-                                            name="waterway" value="waterway">Waterway <br />
+                                            name="waterway" value="waterway"> Waterway <br />
                                     </div>
                                     <div class="option_group_checbox">
-                                        <input onclick="oncheckroad();" type="checkbox" id="road"
-                                            name="road" value="road">Road <br />
+                                        <input onclick="oncheckwater();" type="checkbox" id="water"
+                                            name="water" value="water"> Water <br />
+                                    </div>
+                                    <div class="option_group_checbox">
+                                        <input onclick="onchecklanduse();" type="checkbox" id="landuse"
+                                            name="landuse" value="landuse"> Landuse <br />
+                                    </div>
+                                    <div class="option_group_checbox">
+                                        <input onclick="oncheckplace();" type="checkbox" id="place"
+                                            name="place" value="place"> Place <br />
+                                    </div>
+                                    <div class="option_group_checbox">
+                                        <input onclick="onchecknatural();" type="checkbox" id="natural"
+                                            name="natural" value="natural"> Natural <br />
                                     </div>
                                 </div>
                                 <div class="option_load">
@@ -146,7 +158,10 @@
     var layerdistrict;
     var layer_rail;
     var layer_waterway;
-    var layer_road;
+    var layer_water;
+    var layer_landuse;
+    var layer_place;
+    var layer_natural;
     var value = '';
 
     // start add hight light map -----------------------------------------            
@@ -183,6 +198,14 @@
     var styleFunction = function(feature) {
         return styles[feature.getGeometry().getType()];
     };
+    var stylePoint = new ol.style.Style({
+                image: new ol.style.Icon({
+                    anchor: [0.5, 0.5],
+                    anchorXUnits: "fraction",
+                    anchorYUnits: "fraction",
+                    src: "http://localhost/final/HTTTDL_BTL1/yellow_dot.svg"
+                })
+            });
     vectorLayer = new ol.layer.Vector({
         //source: vectorSource,
         style: styleFunction
@@ -222,10 +245,19 @@
         handleOnCheck('waterway', layer_waterway);
     }
 
-    function oncheckroad() {
-        handleOnCheck('road', layer_road);
+    function oncheckwater() {
+        handleOnCheck('water', layer_water);
+    }
+    function onchecklanduse() {
+        handleOnCheck('landuse', layer_landuse);
     }
 
+    function oncheckplace() {
+        handleOnCheck('place', layer_place);
+    }
+    function onchecknatural() {
+        handleOnCheck('natural', layer_natural);
+    }
     function initialize_map() {
 
         layerBG = new ol.layer.Tile({
@@ -270,7 +302,7 @@
                 }
             })
         });
-        layer_road = new ol.layer.Image({
+        layer_water = new ol.layer.Image({
             source: new ol.source.ImageWMS({
                 ratio: 1,
                 url: 'http://localhost:8080/geoserver/example/wms?',
@@ -278,7 +310,7 @@
                     'FORMAT': format,
                     'VERSION': '1.1.1',
                     STYLES: '',
-                    LAYERS: '	gis_osm_roads_free_1',
+                    LAYERS: 'gis_osm_water_a_free_1',
                 }
             })
         });
@@ -292,6 +324,43 @@
                     'VERSION': '1.1.1',
                     STYLES: '',
                     LAYERS: 'gis_osm_waterways_free_1',
+                }
+            })
+        });
+
+        layer_landuse = new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+                ratio: 1,
+                url: 'http://localhost:8080/geoserver/example/wms?',
+                params: {
+                    'FORMAT': format,
+                    'VERSION': '1.1.1',
+                    STYLES: '',
+                    LAYERS: 'gis_osm_landuse_a_free_1',
+                }
+            })
+        });
+        layer_natural = new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+                ratio: 1,
+                url: 'http://localhost:8080/geoserver/example/wms?',
+                params: {
+                    'FORMAT': format,
+                    'VERSION': '1.1.1',
+                    STYLES: '',
+                    LAYERS: 'natural_point',
+                }
+            })
+        });
+        layer_place = new ol.layer.Image({
+            source: new ol.source.ImageWMS({
+                ratio: 1,
+                url: 'http://localhost:8080/geoserver/example/wms?',
+                params: {
+                    'FORMAT': format,
+                    'VERSION': '1.1.1',
+                    STYLES: '',
+                    LAYERS: 'place_point',
                 }
             })
         });
@@ -444,14 +513,14 @@
                 });
             }
 
-            if (value == "road") {
+            if (value == "water") {
                 $.ajax({
                     type: "POST",
                     url: "pgsqlAPI.php",
                     //dataType: 'json',
                     //data: {functionname: 'reponseGeoToAjax', paPoint: myPoint},
                     data: {
-                        functionname: 'getInfoRoadToAjax',
+                        functionname: 'getInfoWaterToAjax',
                         paPoint: myPoint
                     },
                     success: function(result, status, erro) {
@@ -465,7 +534,105 @@
                     type: "POST",
                     url: "pgsqlAPI.php",
                     data: {
-                        functionname: 'getRoadToAjax',
+                        functionname: 'getWaterToAjax',
+                        paPoint: myPoint
+                    },
+                    success: function(result, status, erro) {
+                        highLightObj(result);
+                    },
+                    error: function(req, status, error) {
+                        alert(req + " " + status + " " + error);
+                    }
+                });
+            }
+            if (value == "landuse") {
+                $.ajax({
+                    type: "POST",
+                    url: "pgsqlAPI.php",
+                    //dataType: 'json',
+                    //data: {functionname: 'reponseGeoToAjax', paPoint: myPoint},
+                    data: {
+                        functionname: 'getInfoLandUseToAjax',
+                        paPoint: myPoint
+                    },
+                    success: function(result, status, erro) {
+                        displayObjInfo(result, evt.coordinate);
+                    },
+                    error: function(req, status, error) {
+                        alert(req + " " + status + " " + error);
+                    }
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "pgsqlAPI.php",
+                    data: {
+                        functionname: 'getLandUseToAjax',
+                        paPoint: myPoint
+                    },
+                    success: function(result, status, erro) {
+                        highLightObj(result);
+                    },
+                    error: function(req, status, error) {
+                        alert(req + " " + status + " " + error);
+                    }
+                });
+            }
+            if (value == "place") {
+                vectorLayer.setStyle(stylePoint);
+                $.ajax({
+                    type: "POST",
+                    url: "pgsqlAPI.php",
+                    //dataType: 'json',
+                    //data: {functionname: 'reponseGeoToAjax', paPoint: myPoint},
+                    data: {
+                        functionname: 'getInfoPlaceToAjax',
+                        paPoint: myPoint
+                    },
+                    success: function(result, status, erro) {
+                        displayObjInfo(result, evt.coordinate);
+                    },
+                    error: function(req, status, error) {
+                        alert(req + " " + status + " " + error);
+                    }
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "pgsqlAPI.php",
+                    data: {
+                        functionname: 'getPlaceToAjax',
+                        paPoint: myPoint
+                    },
+                    success: function(result, status, erro) {
+                        highLightObj(result);
+                    },
+                    error: function(req, status, error) {
+                        alert(req + " " + status + " " + error);
+                    }
+                });
+            }
+            if (value == "natural") {
+                vectorLayer.setStyle(stylePoint);
+                $.ajax({
+                    type: "POST",
+                    url: "pgsqlAPI.php",
+                    //dataType: 'json',
+                    //data: {functionname: 'reponseGeoToAjax', paPoint: myPoint},
+                    data: {
+                        functionname: 'getInfoNaturalToAjax',
+                        paPoint: myPoint
+                    },
+                    success: function(result, status, erro) {
+                        displayObjInfo(result, evt.coordinate);
+                    },
+                    error: function(req, status, error) {
+                        alert(req + " " + status + " " + error);
+                    }
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "pgsqlAPI.php",
+                    data: {
+                        functionname: 'getNaturalToAjax',
                         paPoint: myPoint
                     },
                     success: function(result, status, erro) {

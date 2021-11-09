@@ -19,11 +19,22 @@
             $aResult = getInfoWaterWayToAjax($paPDO , $paSRID , $paPoint);
         else if ($functionname == 'getWaterWayToAjax')
             $aResult = getWaterWayToAjax($paPDO , $paSRID , $paPoint) ;
-        else if ($functionname == 'getInfoRoadToAjax')
-            $aResult = getInfoRoadToAjax($paPDO , $paSRID , $paPoint);
-        else if ($functionname == 'getRoadToAjax')
-            $aResult = getRoadToAjax($paPDO , $paSRID , $paPoint) ;
-        
+        else if ($functionname == 'getInfoWaterToAjax')
+            $aResult = getInfoWaterToAjax($paPDO , $paSRID , $paPoint);
+        else if ($functionname == 'getWaterToAjax')
+            $aResult = getWaterToAjax($paPDO , $paSRID , $paPoint) ;
+        else if ($functionname == 'getInfoLandUseToAjax')
+            $aResult = getInfoLandUseToAjax($paPDO , $paSRID , $paPoint);
+        else if ($functionname == 'getLandUseToAjax')
+            $aResult = getLandUseToAjax($paPDO , $paSRID , $paPoint) ;
+        else if ($functionname == 'getInfoPlaceToAjax')
+            $aResult = getInfoPlaceToAjax($paPDO , $paSRID , $paPoint);
+        else if ($functionname == 'getPlaceToAjax')
+            $aResult = getPlaceToAjax($paPDO , $paSRID , $paPoint) ;
+        else if ($functionname == 'getInfoNaturalToAjax')
+            $aResult = getInfoNaturalToAjax($paPDO , $paSRID , $paPoint);
+        else if ($functionname == 'getNaturalToAjax')
+            $aResult = getNaturalToAjax($paPDO , $paSRID , $paPoint) ;
         echo $aResult;
     
         closeDB($paPDO);
@@ -305,43 +316,44 @@
         return "null";
     }
 
-    // ---------------------------Road --------------------------------
-    function getInfoRoadToAjax($paPDO, $paSRID, $paPoint)
+    // ---------------------------Water --------------------------------
+        
+    function getInfoWaterToAjax($paPDO, $paSRID, $paPoint)
     {
-    $paPoint = str_replace(',', ' ', $paPoint);
-    $strDistance = "ST_Distance('" . $paPoint . "',ST_AsText(geom))";
-    $strMinDistance = "SELECT min(ST_Distance('" . $paPoint . "',ST_AsText(geom))) from \"gis_osm_roads_free_1\" ";
-    $mySQLStr = "SELECT gid,fclass,name , st_length(geom::geometry) as length  from \"gis_osm_roads_free_1\" where " . $strDistance . " = (" . $strMinDistance . ") and " . $strDistance . " < 0.5";
-    $result = query($paPDO, $mySQLStr);
+        $paPoint = str_replace(',', ' ', $paPoint);
+        $strDistance = "ST_Distance('" . $paPoint . "',ST_AsText(geom))";
+        $strMinDistance = "SELECT min(ST_Distance('" . $paPoint . "',ST_AsText(geom))) from \"gis_osm_water_a_free_1\" ";
+        $mySQLStr = "SELECT name,fclass, st_area(geom::geometry) as area , ST_Perimeter(geom::geometry) as perimeter from  \"gis_osm_water_a_free_1\" where " . $strDistance . " = (" . $strMinDistance . ") and " . $strDistance . " < 0.5";
+        $result = query($paPDO, $mySQLStr);
 
-    if ($result != null) {
-        $resFin = '<table>';
-        // Lặp kết quả
-        foreach ($result as $item) {
-            if($item['name'] == "") {
-                $item['name'] = "Không có tên";
+        if ($result != null) {
+            $resFin = '<table>';
+            // Lặp kết quả
+            foreach ($result as $item) {
+                if ($item['name'] == ""){
+                    $item['name'] = "Không có tên";
+                }
+                $resFin = $resFin . '<tr><td>Tên: ' . $item['name'] . '</td></tr>';
+                $resFin = $resFin . '<tr><td>Loại: ' . $item['fclass'] . '</td></tr>';
+                $resFin = $resFin . '<tr><td>Diện tích: ' . $item['area'] . '</td></tr>';
+                    $resFin = $resFin . '<tr><td>Chu vi: ' . $item['perimeter'] . '</td></tr>';
+
+                break;
             }
-            $resFin = $resFin . '<tr><td>ID: ' . $item['gid'] . '</td></tr>';
-            $resFin = $resFin . '<tr><td>Loại Đường: ' . $item['fclass'] . '</td></tr>';
-            $resFin = $resFin . '<tr><td>Name: ' . $item['name'] . '</td></tr>';
-            $resFin = $resFin . '<tr><td>Chiều dài: ' . $item['length'] . '</td></tr>';
-
-            break;
-        }
-        $resFin = $resFin . '</table>';
-        return $resFin;
-    } else
-        return "Bạn bấm quá xa!!!";
+            $resFin = $resFin . '</table>';
+            return $resFin;
+        } else
+            return "null";
     }
     
-    function getRoadToAjax($paPDO, $paSRID, $paPoint)
+    function getWaterToAjax($paPDO, $paSRID, $paPoint)
     {
 
     $paPoint = str_replace(',', ' ', $paPoint);
 
     $strDistance = "ST_Distance('" . $paPoint . "',ST_AsText(geom))";
-    $strMinDistance = "SELECT min(ST_Distance('" . $paPoint . "',ST_AsText(geom))) from \"gis_osm_roads_free_1\" ";
-    $mySQLStr = "SELECT ST_AsGeoJson(geom) as geo from \"gis_osm_roads_free_1\" where " . $strDistance . " = (" . $strMinDistance . ") and " . $strDistance . " < 0.5";
+    $strMinDistance = "SELECT min(ST_Distance('" . $paPoint . "',ST_AsText(geom))) from \"gis_osm_water_a_free_1\"";
+    $mySQLStr = "SELECT ST_AsGeoJson(geom) as geo from \"gis_osm_water_a_free_1\" where " . $strDistance . " = (" . $strMinDistance . ") and " . $strDistance . " < 0.5";
     $result = query($paPDO, $mySQLStr);
 
     if ($result != null) {
@@ -352,4 +364,150 @@
     } else
         return "null";
     }
+
+// ---------------------------LandUse --------------------------------
+        
+    function getInfoLandUseToAjax($paPDO, $paSRID, $paPoint)
+    {
+        $paPoint = str_replace(',', ' ', $paPoint);
+        $strDistance = "ST_Distance('" . $paPoint . "',ST_AsText(geom))";
+        $strMinDistance = "SELECT min(ST_Distance('" . $paPoint . "',ST_AsText(geom))) from \"gis_osm_landuse_a_free_1\" ";
+        $mySQLStr = "SELECT name,fclass, st_area(geom::geometry) as area , ST_Perimeter(geom::geometry) as perimeter from  \"gis_osm_landuse_a_free_1\" where " . $strDistance . " = (" . $strMinDistance . ") and " . $strDistance . " < 0.5";
+        $result = query($paPDO, $mySQLStr);
+
+        if ($result != null) {
+            $resFin = '<table>';
+            // Lặp kết quả
+            foreach ($result as $item) {
+                if ($item['name'] == ""){
+                    $item['name'] = "Không có tên";
+                }
+                $resFin = $resFin . '<tr><td>Tên: ' . $item['name'] . '</td></tr>';
+                $resFin = $resFin . '<tr><td>Loại: ' . $item['fclass'] . '</td></tr>';
+                $resFin = $resFin . '<tr><td>Diện tích: ' . $item['area'] . '</td></tr>';
+                    $resFin = $resFin . '<tr><td>Chu vi: ' . $item['perimeter'] . '</td></tr>';
+
+                break;
+            }
+            $resFin = $resFin . '</table>';
+            return $resFin;
+        } else
+            return "null";
+    }
+
+    function getLandUseToAjax($paPDO, $paSRID, $paPoint)
+    {
+
+    $paPoint = str_replace(',', ' ', $paPoint);
+
+    $strDistance = "ST_Distance('" . $paPoint . "',ST_AsText(geom))";
+    $strMinDistance = "SELECT min(ST_Distance('" . $paPoint . "',ST_AsText(geom))) from \"gis_osm_landuse_a_free_1\"";
+    $mySQLStr = "SELECT ST_AsGeoJson(geom) as geo from \"gis_osm_landuse_a_free_1\" where " . $strDistance . " = (" . $strMinDistance . ") and " . $strDistance . " < 0.5";
+    $result = query($paPDO, $mySQLStr);
+
+    if ($result != null) {
+        // Lặp kết quả
+        foreach ($result as $item) {
+            return $item['geo'];
+        }
+    } else
+        return "null";
+    }
+
+
+    //--------------------Điểm--------------------------------
+    function getInfoPlaceToAjax($paPDO, $paSRID, $paPoint)
+    {
+        $paPoint = str_replace(',', ' ', $paPoint);
+        $strDistance = "ST_Distance('" . $paPoint . "',ST_AsText(geom))";
+        $strMinDistance = "SELECT min(ST_Distance('" . $paPoint . "',ST_AsText(geom))) from \"place_point\" ";
+        $mySQLStr = "SELECT fclass,name, xcoord , ycoord from  \"place_point\" where " . $strDistance . " = (" . $strMinDistance . ") and " . $strDistance . " < 0.5";
+        $result = query($paPDO, $mySQLStr);
+
+        if ($result != null) {
+            $resFin = '<table>';
+            // Lặp kết quả
+            foreach ($result as $item) {
+                if ($item['name'] == ""){
+                    $item['name'] = "Không có tên";
+                }
+                $resFin = $resFin . '<tr><td>Tên: ' . $item['name'] . '</td></tr>';
+                $resFin = $resFin . '<tr><td>Loại: ' . $item['fclass'] . '</td></tr>';
+                $resFin = $resFin . '<tr><td>Kinh Độ: ' . $item['xcoord'] . '</td></tr>';
+                $resFin = $resFin . '<tr><td>Vĩ Độ: ' . $item['ycoord'] . '</td></tr>';
+
+                break;
+            }
+            $resFin = $resFin . '</table>';
+            return $resFin;
+        } else
+            return "nulđâsl";
+    }
+
+    function getPlaceToAjax($paPDO, $paSRID, $paPoint)
+    {
+
+    $paPoint = str_replace(',', ' ', $paPoint);
+
+    $strDistance = "ST_Distance('" . $paPoint . "',ST_AsText(geom))";
+    $strMinDistance = "SELECT min(ST_Distance('" . $paPoint . "',ST_AsText(geom))) from \"place_point\"";
+    $mySQLStr = "SELECT ST_AsGeoJson(geom) as geo from \"place_point\" where " . $strDistance . " = (" . $strMinDistance . ") and " . $strDistance . " < 0.5";
+    $result = query($paPDO, $mySQLStr);
+
+    if ($result != null) {
+        // Lặp kết quả
+        foreach ($result as $item) {
+            return $item['geo'];
+        }
+    } else
+        return "null";
+    }
+
+    function getInfoNaturalToAjax($paPDO, $paSRID, $paPoint)
+    {
+        $paPoint = str_replace(',', ' ', $paPoint);
+        $strDistance = "ST_Distance('" . $paPoint . "',ST_AsText(geom))";
+        $strMinDistance = "SELECT min(ST_Distance('" . $paPoint . "',ST_AsText(geom))) from \"natural_point\" ";
+        $mySQLStr = "SELECT fclass,name, xcoord , ycoord from  \"natural_point\" where " . $strDistance . " = (" . $strMinDistance . ") and " . $strDistance . " < 0.5";
+        $result = query($paPDO, $mySQLStr);
+
+        if ($result != null) {
+            $resFin = '<table>';
+            // Lặp kết quả
+            foreach ($result as $item) {
+                if ($item['name'] == ""){
+                    $item['name'] = "Không có tên";
+                }
+                $resFin = $resFin . '<tr><td>Tên: ' . $item['name'] . '</td></tr>';
+                $resFin = $resFin . '<tr><td>Loại: ' . $item['fclass'] . '</td></tr>';
+                $resFin = $resFin . '<tr><td>Kinh Độ: ' . $item['xcoord'] . '</td></tr>';
+                $resFin = $resFin . '<tr><td>Vĩ Độ: ' . $item['ycoord'] . '</td></tr>';
+
+                break;
+            }
+            $resFin = $resFin . '</table>';
+            return $resFin;
+        } else
+            return "nulđâsl";
+    }
+
+    function getNaturalToAjax($paPDO, $paSRID, $paPoint)
+    {
+
+    $paPoint = str_replace(',', ' ', $paPoint);
+
+    $strDistance = "ST_Distance('" . $paPoint . "',ST_AsText(geom))";
+    $strMinDistance = "SELECT min(ST_Distance('" . $paPoint . "',ST_AsText(geom))) from \"natural_point\"";
+    $mySQLStr = "SELECT ST_AsGeoJson(geom) as geo from \"natural_point\" where " . $strDistance . " = (" . $strMinDistance . ") and " . $strDistance . " < 0.5";
+    $result = query($paPDO, $mySQLStr);
+
+    if ($result != null) {
+        // Lặp kết quả
+        foreach ($result as $item) {
+            return $item['geo'];
+        }
+    } else
+        return "null";
+    }
+
 ?>
