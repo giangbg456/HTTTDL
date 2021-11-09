@@ -70,7 +70,7 @@
     function initDB()
     {
         // Kết nối CSDL
-        $paPDO = new PDO('pgsql:host=localhost;dbname=Test-Csdl;port=5432', 'postgres', 'Aa211000');
+        $paPDO = new PDO('pgsql:host=localhost;dbname=csdl;port=5432', 'postgres', '123456');
         return $paPDO;
 
     }

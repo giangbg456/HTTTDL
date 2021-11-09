@@ -162,6 +162,7 @@
     var layer_landuse;
     var layer_place;
     var layer_natural;
+    var overlay;
     var value = '';
 
     // start add hight light map -----------------------------------------            
@@ -215,7 +216,9 @@
 
     // start add map------------------------------------------------
     function handleOnCheck(id, layer) {
+        
         if (document.getElementById(id).checked) {
+            overlay.setPosition(undefined);
             value = document.getElementById(id).value;
 
             // map.setLayerGroup(new ol.layer.Group())
@@ -223,6 +226,7 @@
             // vectorLayer = new ol.layer.Vector({});
             map.addLayer(vectorLayer);
         } else {
+            overlay.setPosition(undefined);
             map.removeLayer(layer);
             map.removeLayer(vectorLayer);
         }
@@ -364,7 +368,7 @@
                 }
             })
         });
-        var overlay = new ol.Overlay( /** @type {olx.OverlayOptions} */ ({
+        overlay = new ol.Overlay( /** @type {olx.OverlayOptions} */ ({
             element: container,
             autoPan: true,
             autoPanAnimation: {
@@ -404,6 +408,8 @@
 
         // start event --------------------------------------------------------------------
         map.on('singleclick', function(evt) {
+            var checkdetailsearch = document.getElementById("checksearch");
+            checkdetailsearch.checked = false;
             var lonlat = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
             var lon = lonlat[0];
             var lat = lonlat[1];
