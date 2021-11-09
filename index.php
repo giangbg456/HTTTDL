@@ -414,6 +414,22 @@
                     type: "POST",
                     url: "pgsqlAPI.php",
                     //dataType: 'json',
+                    //data: {functionname: 'reponseGeoToAjax', paPoint: myPoint},
+                    data: {
+                        functionname: 'getInfoProvinceToAjax',
+                        paPoint: myPoint
+                    },
+                    success: function(result, status, erro) {
+                        displayObjInfo(result, evt.coordinate);
+                    },
+                    error: function(req, status, error) {
+                        alert(req + " " + status + " " + error);
+                    }
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "pgsqlAPI.php",
+                    //dataType: 'json',
 
                     data: {
                         functionname: 'getGeoProvinceToAjax',
@@ -429,6 +445,22 @@
                 });
             }
             if (value == "district") { //Là map province
+                $.ajax({
+                    type: "POST",
+                    url: "pgsqlAPI.php",
+                    //dataType: 'json',
+                    //data: {functionname: 'reponseGeoToAjax', paPoint: myPoint},
+                    data: {
+                        functionname: 'getInfoDistrictToAjax',
+                        paPoint: myPoint
+                    },
+                    success: function(result, status, erro) {
+                        displayObjInfo(result, evt.coordinate);
+                    },
+                    error: function(req, status, error) {
+                        alert(req + " " + status + " " + error);
+                    }
+                });
                 $.ajax({
                     type: "POST",
                     url: "pgsqlAPI.php",

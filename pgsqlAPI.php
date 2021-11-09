@@ -13,6 +13,10 @@
             $aResult = getGeoDistricToAjax($paPDO, $paSRID, $paPoint);
         else if ($functionname == 'getInfoRailToAjax')
             $aResult = getInfoRailToAjax($paPDO , $paSRID , $paPoint);
+        else if ($functionname == 'getInfoProvinceToAjax')
+            $aResult = getInfoProvinceToAjax($paPDO , $paSRID , $paPoint);
+        else if ($functionname == 'getInfoDistrictToAjax')
+            $aResult = getInfoDistrictToAjax($paPDO , $paSRID , $paPoint);
         else if ($functionname == 'getRailToAjax')
             $aResult = getRailToAjax($paPDO , $paSRID , $paPoint) ;
         else if ($functionname == 'getInfoWaterWayToAjax')
@@ -66,7 +70,7 @@
     function initDB()
     {
         // Kết nối CSDL
-        $paPDO = new PDO('pgsql:host=localhost;dbname=csdl;port=5432', 'postgres', '123456');
+        $paPDO = new PDO('pgsql:host=localhost;dbname=Test-Csdl;port=5432', 'postgres', 'Aa211000');
         return $paPDO;
 
     }
@@ -211,6 +215,55 @@
             foreach ($result as $item){
                 $resFin = $resFin.'<tr><td>Gid: '.$item['gid'].'</td></tr>';
                 $resFin = $resFin.'<tr><td>Tên thành phố : '.$item['name_2'].'</td></tr>';
+                $resFin = $resFin.'<tr><td>Chu vi: '.$item['st_perimeter'].'</td></tr>';
+                $resFin = $resFin.'<tr><td>Diện tích: '.$item['st_area'].'</td></tr>';
+                break;
+            }
+            $resFin = $resFin.'</table>';
+            return $resFin;
+        }
+        else
+            return "null";
+    }
+
+
+    function getInfoProvinceToAjax($paPDO,$paSRID,$paPoint)
+    {
+        
+        $paPoint = str_replace(',', ' ', $paPoint);
+        $mySQLStr = "SELECT name_1,ST_Perimeter(gadm36_tha_1.geom), (ST_Area(gadm36_tha_1.geom)) from \"gadm36_tha_1\" where ST_Within('SRID=".$paSRID.";".$paPoint."'::geometry,geom)";
+        $result = query($paPDO, $mySQLStr);
+        
+        if ($result != null)
+        {
+            $resFin = '<table>';
+            // Lặp kết quả
+            foreach ($result as $item){
+                $resFin = $resFin.'<tr><td>Tên Thành phố: '.$item['name_1'].'</td></tr>';
+                $resFin = $resFin.'<tr><td>Chu vi: '.$item['st_perimeter'].'</td></tr>';
+                $resFin = $resFin.'<tr><td>Diện tích: '.$item['st_area'].'</td></tr>';
+                break;
+            }
+            $resFin = $resFin.'</table>';
+            return $resFin;
+        }
+        else
+            return "null";
+    }
+
+    function getInfoDistrictToAjax($paPDO,$paSRID,$paPoint)
+    {
+        
+        $paPoint = str_replace(',', ' ', $paPoint);
+        $mySQLStr = "SELECT name_2,ST_Perimeter(gadm36_tha_2.geom), (ST_Area(gadm36_tha_2.geom)) from \"gadm36_tha_2\" where ST_Within('SRID=".$paSRID.";".$paPoint."'::geometry,geom)";
+        $result = query($paPDO, $mySQLStr);
+        
+        if ($result != null)
+        {
+            $resFin = '<table>';
+            // Lặp kết quả
+            foreach ($result as $item){
+                $resFin = $resFin.'<tr><td>Tên Thành phố: '.$item['name_2'].'</td></tr>';
                 $resFin = $resFin.'<tr><td>Chu vi: '.$item['st_perimeter'].'</td></tr>';
                 $resFin = $resFin.'<tr><td>Diện tích: '.$item['st_area'].'</td></tr>';
                 break;
